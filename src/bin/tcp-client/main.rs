@@ -35,10 +35,10 @@ async fn read_foo_from_file(f: &mut File) -> String {
         let mut buf = [0u8; 8];
         let n = f.read(&mut buf).await.unwrap();
         string.push_str(str::from_utf8(&buf[..n]).unwrap());
-        println!("{string}");
         if n == 0 {
             return string;
         }
+        println!("{string}");
         tokio::time::sleep(Duration::from_secs(1)).await;
     }
 }
