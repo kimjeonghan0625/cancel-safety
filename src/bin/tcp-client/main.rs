@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::{pin::pin, time::Duration};
 
 use cancel_safety::Foo;
 use tokio::{
@@ -19,9 +19,11 @@ async fn main() {
 
     let mut file = File::open("foo.txt").await.unwrap();
 
+    let mut read_file_from_file_fut = pin!(read_foo_from_file(&mut file));
+
     loop {
         tokio::select! {
-            data = read_foo_from_file(&mut file) => {
+            data = &mut read_file_from_file_fut => {
                 send_foo_to_stream(&mut stream, &data).await;
                 break;
             }
