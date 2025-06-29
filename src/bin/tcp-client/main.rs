@@ -10,10 +10,13 @@ use tokio::{
 #[tokio::main]
 async fn main() {
     let mut stream = TcpStream::connect("127.0.0.1:8080").await.unwrap();
+
     let mut file = File::create("foo.txt").await.unwrap();
     let foo = Foo::new("hello cancelation safety!");
-    let s = serde_json::to_string(&foo).unwrap();
-    file.write_all(s.as_bytes()).await.unwrap();
+    file.write_all(&serde_json::to_vec(&foo).unwrap())
+        .await
+        .unwrap();
+
     let mut file = File::open("foo.txt").await.unwrap();
 
     loop {
